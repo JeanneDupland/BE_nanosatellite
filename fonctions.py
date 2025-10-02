@@ -52,14 +52,14 @@ def perte_polar (Ar_stat, Ar_sat,polar):
     Ar_sat est le ratio axial de l'émetteur et polar, l'angle de polarisation"""
     pol = []
     for i in Ar_sat:
-        pol.append(0.5 + (4*Ar_stat*i + (Ar_stat**2-1)*(i**2-1)*np.cos(2*polar))/(2*(Ar_stat**2+1)*(i**2+1)))
+        pol.append(10*np.log10(0.5 + (4*Ar_stat*i + (Ar_stat**2-1)*(i**2-1)*np.cos(2*polar))/(2*(Ar_stat**2+1)*(i**2+1))))
     return np.array(pol)
 
 def perte_depoint (lamb, diam_ant, E):
     depoint = []
     theta_3dB = 70*lamb/diam_ant
     for i in E:
-        depoint.append(-12*(i/theta_3dB)**2)
+        depoint.append(-12*(90/theta_3dB)**2)
     return np.array(depoint)
 
 if __name__ == "__main__":
