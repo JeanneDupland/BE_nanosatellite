@@ -25,7 +25,7 @@ Taux_dispo = 99 # en %
 
 ## Station sol Kourou
 Lat = 5.1 # en degres nord
-Altitude = 300 # en metres  
+h_stat = 300 # en metres
 Type_antenne = 'Parabolique'
 Diametre_antenne = 11.125 # en metres
 Angle_ellipse = 45 # en degres
@@ -54,3 +54,8 @@ Re = 6371e3 # en metres
 k = 1.38066e-23 # en J/K
 
 ## Pertes pluie
+kH = 0.004115 #pour une fréquence de 8.2GHz
+kV = 0.003450 #pour une fréquence de 8.2GHz
+aH = 1.3905 #pour une fréquence de 8.2GHz
+aV = 1.3797 #pour une fréquence de 8.2GHz
+
