@@ -25,7 +25,7 @@ Taux_dispo = 99 # en %
 
 ## Station sol Kourou
 Lat = 5.1 # en degres nord
-Altitude = 300 # en metres
+Altitude = 300 # en metres  
 Type_antenne = 'Parabolique'
 Diametre_antenne = 11.125 # en metres
 Angle_ellipse = 45 # en degres
