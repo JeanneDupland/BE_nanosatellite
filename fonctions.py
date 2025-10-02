@@ -8,7 +8,7 @@ def D(Re, altitude_sat,Angle_elevation): #en m
     return np.sqrt(Re**2+(Re+altitude_sat)**2-2*Re*(Re+altitude_sat)*np.cos(phi))
 
 def lamb(c,f):
-    """ Longueur d'inde en fonction de la fréquence et de la vitesse de la lumière """
+    """ Longueur d'onde en fonction de la fréquence et de la vitesse de la lumière """
     return c/f
 
 def Gain(D, lamb): # en dB
