@@ -1,10 +1,14 @@
 import numpy as np
+import constantes as ct
 
 def D(Re, altitude_sat,Angle_elevation): #en m
     """ Distance satellite en m en se basant sur le rayon de la Terre,
     L'altitude de la station, l'altitude du satellite et l'angle d'élévation"""
+    Dist =[]
     phi = 90-Angle_elevation-np.arcsin((Re/(Re+altitude_sat))*np.cos(Angle_elevation))
-    return np.sqrt(Re**2+(Re+altitude_sat)**2-2*Re*(Re+altitude_sat)*np.cos(phi))
+    for i in Angle_elevation:
+        Dist.append(np.sqrt(Re**2+(Re+altitude_sat)**2-2*Re*(Re+altitude_sat)*np.cos(phi)))
+    return Dist
 
 def lamb(c,f):
     """ Longueur d'onde en fonction de la fréquence et de la vitesse de la lumière """
@@ -35,5 +39,23 @@ def perte_polar (Ar_stat, Ar_sat,polar):
     Ar_sat est le ratio axial de l'émetteur et polar, l'angle de polarisation"""
     return 0.5 + (4*Ar_stat*Ar_sat + (Ar_stat**2-1)*(Ar_sat**2-1)*np.cos(2*polar))/(2*(Ar_stat**2+1)*(Ar_sat**2+1))
 
-def perte_depoint ():
-    return 
+def perte_depoint (lamb, diam_ant, E):
+    theta_3dB = 70*lamb/diam_ant
+    return -12*(E/theta_3dB)**2
+
+if __name__ == "__main__":
+    P = ct.Ptx
+    Dist = D(ct.Re, ct.h_sat, ct.Angle_elevation)
+    lam = lamb(ct.c, ct.f)
+    G = Gain(Dist, lam)
+    EIRP = PIRE(P,G)
+    Perte_EL = LFS(Dist, lam)
+    Att_spe_pluie = att_pluie(ct.kH, ct.kV, ct.aH, ct.aV, ct.Angle_elevation, ct.Angle_ellipse, ct.I_precip)
+    polar = perte_polar(ct.AR_stat, ct.AR_sat, ct.Angle_ellipse)
+    depoint = perte_depoint(lam, ct.Diametre_antenne, ct.Angle_elevation)
+    print(EIRP)
+    print(Dist)
+    print(Perte_EL)
+    print(Att_spe_pluie)
+    print(polar)
+    print(depoint)
