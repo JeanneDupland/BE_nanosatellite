@@ -57,44 +57,56 @@ def Ls(hr,hs,E):
 def Lg(Ls,E): 
     "Projection horizontale Lg de la longueur du trajet oblique"
     Lg = []
-    for i in E: 
-        Lg.append(Ls*np.cos(i))
-    return Lg
+    for i,l in zip(E,Ls): 
+        Lg.append(l * np.cos(i))
+    return np.array(Lg)
 
 def fc (Lg,pluie,f): 
     "facteur de réduction horizontale pour 0,01% du temps"
-    r001 = 1 / (1+0.78*np.sqrt(Lg*pluie/f) - 0.38*(1 - np.exp(-2*Lg)))
-    return r001
+    r001=[]
+    for l in Lg:
+        r001.append(1 / (1+0.78*np.sqrt(l*pluie/f) - 0.38*(1 - np.exp(-2*l)))
+    return np.array(r001)
 
-def f_zetha (hr,hs,Lg, r001): 
-    "zetha pour facteur de réduction"
-    zetha = np.arctan((hr-hs)/Lg*r001)
-    return zetha
+def f_zetha(hr, hs, Lg, r001):
+    """zetha pour facteur de réduction"""
+    zetha = []
+    for L, r in zip(Lg, r001):
+        zetha.append(np.rad2deg(np.arctan((hr - hs) / (L * r))))
+    return np.array(zetha)
 
-def Lr(Lg,r001,E,zetha,hr,hs): 
-    if zetha>E: 
-        Lr = Lg*r001/np.cos(E)
-    else: 
-        Lr = (hr-hs)/np.sin(E)
-    return Lr
+def Lr(Lg, r001, E, zetha, hr, hs):
+    """Longueur du trajet de pluie effective"""
+    Lr = []
+    for L, r, e, z in zip(Lg, r001, E, zetha):
+        if np.deg2rad(z) > np.deg2rad(e):
+            Lr.append(L * r / np.cos(np.deg2rad(e)))
+        else:
+            Lr.append((hr - hs) / np.sin(np.deg2rad(e)))
+    return np.array(Lr)
 
-" angle de polarisation de 45° donc Xhi=0"
+def f_v001(E, Lr, pluie, f):
+    """Facteur d'ajustement v001 pour 0,01 % du temps"""
+    v001 = []
+    for e, L in zip(E, Lr):
+        e_rad = np.deg2rad(e)
+        v001.append(1 / (1 + np.sqrt(np.sin(e_rad)) * (31 * (1 - np.exp(-e_rad)) * np.sqrt(L * pluie) / f**2 - 0.45)))
+    return np.array(v001)
 
-def f_v001 (E,Lr,pluie,f): 
-    "facteur d'ajustement v001 pour 0,01% du temps"
-    v001 = 1/(1+np.sqrt(np.sin(E))*(31*(1-np.exp(-E))*np.sqrt(Lr*pluie)/f**2 - 0.45))
-    return v001
+def Le(Lr, v001):
+    """Longueur effective du trajet"""
+    Le = []
+    for L, v in zip(Lr, v001):
+        Le.append(L * v)
+    return np.array(Le)
 
-def Le (Lr,v001): 
-    "longueur effective du trajet"
-    Le = Lr * v001
-    return Le
-
-def A001 (pluie,Le): 
-    "Affaiblissement prévu dépassé pour 0,01% d'une année moyenne"
-    A001= pluie*Le
-    return A001
-
+def A001(pluie, Le):
+    """Affaiblissement prévu dépassé pour 0,01 % d'une année moyenne"""
+    A001 = []
+    for L in Le:
+        A001.append(pluie * L)
+    return np.array(A001)
+    
 def perte_polar (Ar_stat, Ar_sat,polar):
     """ Perte de polarisations où Ar_stat est le ratio axial du récepteur,
     Ar_sat est le ratio axial de l'émetteur et polar, l'angle de polarisation"""
