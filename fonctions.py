@@ -47,6 +47,54 @@ def att_pluie (kH, kV, aH, aV, E, polar, R):
         pluie.append(10*np.log10(k_coef*R**(alpha_coef)))
     return np.array(pluie)
 
+def Ls(hr,hs,E): 
+    "Pour E>5° longueur du trajet oblique en dessous de la hauteur de pluie"
+    Ls = []
+    for i in E:
+        Ls.append((hr - hs)/np.sin(i))
+    return Ls
+
+def Lg(Ls,E): 
+    "Projection horizontale Lg de la longueur du trajet oblique"
+    Lg = []
+    for i in E: 
+        Lg.append(Ls*np.cos(i))
+    return Lg
+
+def fc (Lg,pluie,f): 
+    "facteur de réduction horizontale pour 0,01% du temps"
+    r001 = 1 / (1+0.78*np.sqrt(Lg*pluie/f) - 0.38*(1 - np.exp(-2*Lg)))
+    return r001
+
+def f_zetha (hr,hs,Lg, r001): 
+    "zetha pour facteur de réduction"
+    zetha = np.arctan((hr-hs)/Lg*r001)
+    return zetha
+
+def Lr(Lg,r001,E,zetha,hr,hs): 
+    if zetha>E: 
+        Lr = Lg*r001/np.cos(E)
+    else: 
+        Lr = (hr-hs)/np.sin(E)
+    return Lr
+
+" angle de polarisation de 45° donc Xhi=0"
+
+def f_v001 (E,Lr,pluie,f): 
+    "facteur d'ajustement v001 pour 0,01% du temps"
+    v001 = 1/(1+np.sqrt(np.sin(E))*(31*(1-np.exp(-E))*np.sqrt(Lr*pluie)/f**2 - 0.45))
+    return v001
+
+def Le (Lr,v001): 
+    "longueur effective du trajet"
+    Le = Lr * v001
+    return Le
+
+def A001 (pluie,Le): 
+    "Affaiblissement prévu dépassé pour 0,01% d'une année moyenne"
+    A001= pluie*Le
+    return A001
+
 def perte_polar (Ar_stat, Ar_sat,polar):
     """ Perte de polarisations où Ar_stat est le ratio axial du récepteur,
     Ar_sat est le ratio axial de l'émetteur et polar, l'angle de polarisation"""
