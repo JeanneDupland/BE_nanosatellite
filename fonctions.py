@@ -126,3 +126,4 @@ if __name__ == "__main__":
     print('Atténuatiion spé pluie=', Att_spe_pluie)
     print('pertes polarisation =', polar)
     print('pertes dépointage=', depoint)
+    print("atténuation due à la pluie dépassée pendant 0,01%=",A001)
