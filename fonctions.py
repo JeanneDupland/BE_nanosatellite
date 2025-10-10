@@ -106,6 +106,13 @@ def A001(pluie, Le):
     for L in Le:
         A001.append(pluie * L)
     return np.array(A001)
+
+def A1(A001): 
+    " Atténuation due à la pluie dépassée pendant 1%, Beta = 0 comme p=1%"
+    A1=[]
+    for i in A001: 
+        A1.append(i*(1/0,01)**(-0,655-0,045*np.log(i))
+    return np.array(A1)
     
 def perte_polar (Ar_stat, Ar_sat,polar):
     """ Perte de polarisations où Ar_stat est le ratio axial du récepteur,
