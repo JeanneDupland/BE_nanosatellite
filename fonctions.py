@@ -146,7 +146,7 @@ def temperature_bruit_entrée_antenne(Tsky,Tgd, Tm, P):
     return (Ta_in)
 
 def temperature_bruit_sortie_antenne(Ta_in,Gain):
-    # 2. Calcul de T_a_out
+    # 2. Calcul de T_a_out Gain ????
     GRx_ratio = 10 ** (Gain / 10)
     Ta_out = (1 / 720) * Ta_in * (GRx_ratio ** 2)
     return T_a_out
