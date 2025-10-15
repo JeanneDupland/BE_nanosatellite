@@ -149,8 +149,11 @@ def temperature_bruit_sortie_antenne(Ta_in,Gain):
     # 2. Calcul de T_a_out
     GRx_ratio = 10 ** (Gain / 10)
     Ta_out = (1 / 720) * Ta_in * (GRx_ratio ** 2)
-
     return T_a_out
+
+def temperature_entrée_récepteur(Ta_out,Tf,Lfrx): 
+    Trx = Ta_out * L + Tf*(L - 1)
+    return Trx
     
 if __name__ == "__main__":
     P = ct.Ptx
@@ -171,3 +174,4 @@ if __name__ == "__main__":
     print("atténuation due à la pluie dépassée pendant 0,01%=", A001)
     print("Puissance de la porteuse reçue par le récepteur est:",P_reçue)
     print ("La température de bruit en sortie de l'antenne est:",Ta_out)
+     print("La température équivalente de bruit totale à l'entrée du récepteur est",Trx)
