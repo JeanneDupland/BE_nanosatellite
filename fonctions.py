@@ -135,6 +135,22 @@ def Pre(PIRE, Gain, LFS, A1,pol,depoint):
     """
     P_reçue= PIRE + Gain - (LFS + A1 +pol + depoint)
     return np.array(P_reçue)
+
+def temperature_bruit_entrée_antenne(Tsky,Tgd, Tm, P):
+    """
+    Calcule la température équivalente de bruit en sortie de l'antenne (en K).
+    """
+    # 1. Calcul de T_a_in
+    L_atm = 10 ** (P / 10)
+    Ta_in = (Tsky / L_atm) + Tm * (1 - 1 / L_atm) + Tgd
+    return (Ta_in)
+
+def temperature_bruit_sortie_antenne(Ta_in,Gain):
+    # 2. Calcul de T_a_out
+    GRx_ratio = 10 ** (Gain / 10)
+    Ta_out = (1 / 720) * Ta_in * (GRx_ratio ** 2)
+
+    return T_a_out
     
 if __name__ == "__main__":
     P = ct.Ptx
@@ -154,3 +170,4 @@ if __name__ == "__main__":
     print('pertes dépointage=', depoint)
     print("atténuation due à la pluie dépassée pendant 0,01%=", A001)
     print("Puissance de la porteuse reçue par le récepteur est:",P_reçue)
+    print ("La température de bruit en sortie de l'antenne est:",Ta_out)
