@@ -153,3 +153,4 @@ if __name__ == "__main__":
     print('pertes polarisation =', polar)
     print('pertes dépointage=', depoint)
     print("atténuation due à la pluie dépassée pendant 0,01%=", A001)
+    print("Puissance de la porteuse reçue par le récepteur est:",P_reçue)
