@@ -129,6 +129,13 @@ def perte_depoint (lamb, diam_ant, E):
         depoint.append(-12*(90/theta_3dB)**2)
     return np.array(depoint)
 
+def Pre(PIRE, Gain, LFS, A1,pol,depoint):
+    """
+    Calcule la puissance reçue (porteuse) en dBW au niveau du récepteur.
+    """
+    P_reçue= PIRE + Gain - (LFS + A1 +pol + depoint)
+    return np.array(P_reçue)
+    
 if __name__ == "__main__":
     P = ct.Ptx
     Dist = D(ct.Re, ct.h_sat, ct.Angle_elevation)
