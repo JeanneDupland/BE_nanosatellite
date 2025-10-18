@@ -6,6 +6,9 @@ import numpy as np
 f = 8.2e9 # en Hz
 h_sat = 420e3 # en m
 Ptx = np.linspace(0.25, 1.5, 100)
+P_test = 1.5 # en W
+E_test = 90 # en degres
+B_test = 2e6 # en bit/s
 Perte_bord = 0.5 # en dB
 
 ## Caractéristique antenne
@@ -40,11 +43,13 @@ Tf = 290 # en K
 Glna = 50 # en dB
 Gmx = -10 # en dB
 Lfrx = -0.5 # en dB
+hr = 4.86e3 # en metres
 
 ## Canal de propagation Kourou
 I_precip = 85 # en mm/h
 Perte_atm = 0.2 # en dB
 Tsky = 20 # en K
+Tcosmic = 2.7 # en K
 Tgd = 45 # en K
 Tm = 275 # en K
 
@@ -58,4 +63,3 @@ kH = 0.004115 #pour une fréquence de 8.2GHz
 kV = 0.003450 #pour une fréquence de 8.2GHz
 aH = 1.3905 #pour une fréquence de 8.2GHz
 aV = 1.3797 #pour une fréquence de 8.2GHz
-
