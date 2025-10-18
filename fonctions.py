@@ -221,6 +221,29 @@ def debit_max(alpha, Rb, marge_impose):
     debit_max = 3*(B-2*marge_impose)/(1+alpha)
     return debit_max
 
+#Question 2.a
+def trace_courbes_paramétriques(E,debit,Tx,marge): 
+    # Courbes pour les différents angles d'élévation
+    plt.figure(figsize=(8,5))
+    for i in E:
+        plt.plot(marge,debit[i])
+    plt.xlabel("Débit d'information pour les différentes angles d'élévation (Mbits/s")
+    plt.ylabel("Marge système restante (dB)")
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+    # Courbes pour différentes puissances Tx
+    plt.figure(figsize=(8,5))
+    for j in Tx:
+        plt.plot(debit, j)
+    
+    plt.xlabel("Débit d'information pour les différentes puissances(Mbit/s)")
+    plt.ylabel("Marge système restante (dB)")
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+    
 if __name__ == "__main__":
     P = ct.Ptx
     Dist = D(ct.Re, ct.h_sat, ct.Angle_elevation)
