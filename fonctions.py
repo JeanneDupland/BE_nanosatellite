@@ -222,7 +222,7 @@ def debit_max(alpha, Rb, marge_impose):
     return debit_max
 
 #Question 2.a
-def trace_courbes_paramétriques(E,debit,Tx,marge): 
+def trace_courbes_paramétriques(E,debit,Ptx,marge): 
     # Courbes pour les différents angles d'élévation
     plt.figure(figsize=(8,5))
     for i in E:
@@ -233,10 +233,10 @@ def trace_courbes_paramétriques(E,debit,Tx,marge):
     plt.grid(True)
     plt.show()
 
-    # Courbes pour différentes puissances Tx
+    # Courbes pour différentes puissances Ptx
     plt.figure(figsize=(8,5))
-    for j in Tx:
-        plt.plot(debit, j)
+    for j in Ptx:
+        plt.plot(marge,debit[j])
     
     plt.xlabel("Débit d'information pour les différentes puissances(Mbit/s)")
     plt.ylabel("Marge système restante (dB)")
