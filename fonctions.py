@@ -203,7 +203,7 @@ def debit_max(PRx, Eb_N0_req, Marge, N0):
 
 #Question 2.a
 def trace_courbes_parametriques(Eb_N0_req, dep, G, kH, kV, aH, aV, E, E_test, Ar_stat, Ar_sat, polar, R, Re, h_sat, k_bolt,c, f, D, efficacite, Tsky, Tgd, Tm, P, P_test,Tf,L_cable, h_stat, Lat, p_EL, Debit):
-    "Courbes parametriques permettant de determiner la marge système restante (dB) en fonction du débit
+    "Courbes paramétriques permettant de déterminer la marge système restante (dB) en fonction du débit d'information (Mbits/s) pour les différents angles d'élévations" 
     plt.figure(figsize=(8,5))
     marge_elev = []
     for e in E:
@@ -220,7 +220,7 @@ def trace_courbes_parametriques(Eb_N0_req, dep, G, kH, kV, aH, aV, E, E_test, Ar
     plt.legend()
     plt.grid(True)
     plt.show()
-
+ "Courbes paramétriques permettant de déterminer la marge système restante (dB) en fonction du débit d'information (Mbits/s) pour les différentes puissances" 
     marge_puissance = []
     for p in P:
         marge_list = []
