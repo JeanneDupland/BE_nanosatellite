@@ -201,12 +201,14 @@ def debit_max(alpha, Rb, marge_impose):
     return debit_max
 
 #Question 2.a
-def trace_courbes_paramétriques(E,debit,Ptx,marge): 
+def trace_courbes_parametriques(E, Ptx, alpha, Rb_values):
     # Courbes pour les différents angles d'élévation
     plt.figure(figsize=(8,5))
     for i in E:
-        plt.plot(marge,debit[i])
-    plt.xlabel("Débit d'information pour les différentes angles d'élévation (Mbits/s")
+        marge_vals = [marge(Rb, alpha) for Rb in Rb_values]
+        plt.plot(Rb_values, marge_vals)
+    
+    plt.xlabel("Débit d'information Rb (Mbit/s)")
     plt.ylabel("Marge système restante (dB)")
     plt.legend()
     plt.grid(True)
@@ -215,14 +217,14 @@ def trace_courbes_paramétriques(E,debit,Ptx,marge):
     # Courbes pour différentes puissances Ptx
     plt.figure(figsize=(8,5))
     for j in Ptx:
-        plt.plot(marge,debit[j])
+        marge_vals = [marge(Rb, alpha) + j/10 for Rb in Rb_values] 
+        plt.plot(Rb_values, marge_vals)
     
-    plt.xlabel("Débit d'information pour les différentes puissances(Mbit/s)")
+    plt.xlabel("Débit d'information Rb (Mbit/s)")
     plt.ylabel("Marge système restante (dB)")
     plt.legend()
     plt.grid(True)
     plt.show()
-    
 if __name__ == "__main__":
     EIRP = PIRE(ct.P_test,ct.Gain_bord[9])
     Dist = D(ct.Re, ct.h_sat, ct.E_test)
