@@ -5,7 +5,7 @@ import numpy as np
 ## Paramètre bord
 f = 8.2e9 # en Hz
 h_sat = 420e3 # en m
-Ptx = np.linspace(0.25, 1.5, 100)
+Ptx = np.linspace(0.25, 1.5, 10)
 P_test = 1.5 # en W
 E_test = 90 # en degres
 B_test = 2e6 # en bit/s
@@ -20,7 +20,7 @@ AR_sat = [16.5, 16.5, 18.8, 20, 14.7, 7.2, 2.5, 5.8, 5.5, 4.5]
 
 ## Modulation 8-PSK
 Rapport_EB_N0 = 12.97 # en dB
-Debit = np.linspace(2,10,100) # en Mbit/s
+Debit =  np.linspace(1e3, 1e7, 200) # en Mbit/s
 Roll_off_factor = 0.25 
 Code_correcteur = 0.5 
 Marge = 3  # en dB
@@ -33,7 +33,7 @@ Type_antenne = 'Parabolique'
 Diametre_antenne = 11.125 # en metres
 Angle_ellipse = 45 # en degres
 AR_stat = 2
-Angle_elevation = np.linspace(5,90,100)# en degres
+Angle_elevation = np.linspace(5,90,10)# en degres
 Depointage = 0.1 # en degres
 Efficacite_antenne = 0.65
 Tlna = 150 # en K
