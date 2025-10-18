@@ -272,3 +272,5 @@ if __name__ == "__main__":
     print("Question 1.t/ \nEfficacité spectrale =", eta, "bit/s/Hz")
     print("Question 1.u/ \nMarge bande passante =", m, "Hz")
     print("Question 1.v/ \nDébit maximum =", deb_max, "bit/s")
+    trace_courbes_parametriques(ct.Elevation_sol, ct.Ptx, ct.Roll_off_factor, np.linspace(1e3, 1e7, 200))
+
