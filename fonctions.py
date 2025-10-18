@@ -1,6 +1,6 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import constantes as ct
+import matplotlib.pyplot as plt
 
 ## Question 1.a/
 def PIRE(P,G): # en dB
@@ -107,17 +107,14 @@ def Gain_pertedep(c, f, D, efficacite, dep):
     return G_depoint
     
 ## Question 1.k/
-def Pre(c, f, Diam, efficacite, dep, P, G, kH, kV, aH, aV, E, Ar_stat, Ar_sat, polar, R, Angle_elevation, Re, h_sat):
+def Pre(c, f, Diam, efficacite, dep, P, G, kH, kV, aH, aV, E, Ar_stat, Ar_sat, polar, R, h_stat, Lat, p_EL):
     """
     Calcule la puissance reçue (porteuse) en dBW au niveau du récepteur.
     """
     EIRP = PIRE(P, G)
     G_depoint = Gain_pertedep(c, f, Diam, efficacite, dep)
-    Attpluie = att_pluie(kH, kV, aH, aV, E, polar, R)
+    Attpluie = A001(kH, kV, aH, aV, h_stat, E, R, polar, f, Lat)
     p_pol = perte_polar(Ar_stat, Ar_sat, polar)
-    Dist = D(Re, h_sat, Angle_elevation)
-    lamb = c/f
-    p_EL = LFS(Dist, lamb, Angle_elevation, c, f)  
     P_reçue = EIRP + G_depoint - Attpluie + p_EL + p_pol 
     return P_reçue
 
@@ -163,114 +160,78 @@ def n0(k_bolt,c, f, D, efficacite, Tsky, Tgd, Tm, P,Tf,L_cable):
     return n0
 
 ## Question 1.q/
-def C_N0_ratio(dep, G, kH, kV, aH, aV, E, Ar_stat, Ar_sat, polar, R, Angle_elevation, Re, h_sat, k_bolt,c, f, D, efficacite, Tsky, Tgd, Tm, P,Tf,L_cable):
-    Prx = Pre(c, f, D, efficacite, dep, P, G, kH, kV, aH, aV, E, Ar_stat, Ar_sat, polar, R, Angle_elevation, Re, h_sat)
+def C_N0_ratio(dep, G, kH, kV, aH, aV, E, Ar_stat, Ar_sat, polar, R, k_bolt,c, f, D, efficacite, Tsky, Tgd, Tm, P,Tf,L_cable, h_stat, Lat, p_EL):
+    Prx = Pre(c, f, D, efficacite, dep, P, G, kH, kV, aH, aV, E, Ar_stat, Ar_sat, polar, R, h_stat, Lat, p_EL)
     N0 = n0(k_bolt,c, f, D, efficacite, Tsky, Tgd, Tm, P,Tf,L_cable)
     ratio = (Prx - 10*np.log10(N0))
     return ratio
 
 ## Question 1.r/
-def Eb_N0_ratio(Rb, dep, G, kH, kV, aH, aV, E, Ar_stat, Ar_sat, polar, R, Angle_elevation, Re, h_sat, k_bolt,c, f, D, efficacite, Tsky, Tgd, Tm, P,Tf,L_cable):
-    CN0_ratio = C_N0_ratio(dep, G, kH, kV, aH, aV, E, Ar_stat, Ar_sat, polar, R, Angle_elevation, Re, h_sat, k_bolt,c, f, D, efficacite, Tsky, Tgd, Tm, P,Tf,L_cable)
+def Eb_N0_ratio(Rb, dep, G, kH, kV, aH, aV, E, Ar_stat, Ar_sat, polar, R, k_bolt,c, f, D, efficacite, Tsky, Tgd, Tm, P,Tf,L_cable, h_stat, Lat, p_EL):
+    CN0_ratio = C_N0_ratio(dep, G, kH, kV, aH, aV, E, Ar_stat, Ar_sat, polar, R, k_bolt,c, f, D, efficacite, Tsky, Tgd, Tm, P,Tf,L_cable, h_stat, Lat, p_EL)
     EbN0_ratio = CN0_ratio - 10*np.log10(Rb)
     return EbN0_ratio
 
 ## Question 1.s/
-def bande_passante(alpha, Rb):
+def bande_passante(alpha, Rb, M = 8):
     "Bande passante du signal"
-    B = 3*Rb * (1 + alpha)
+    Rs = Rb/np.log2(M)
+    B = (1+alpha)*Rs
     return B
 
 ## Question 1.t/
-def eff_spectrale(c_05, Rb, alpha):
+def eff_spectrale(c_05, Rb, alpha, M = 8):
     "Efficacité spectrale"
-    eta = c_05 * Rb / bande_passante(alpha, Rb)
+    eta = c_05 * Rb / bande_passante(alpha, Rb, M)
     return eta
 
 ## Question 1.u/
-def marge(Rb, alpha):
+def marge(Eb_N0_req, Rb, dep, G, kH, kV, aH, aV, E, Ar_stat, Ar_sat, polar, R, Angle_elevation, Re, h_sat, k_bolt,c, f, D, efficacite, Tsky, Tgd, Tm, P,Tf,L_cable, h_stat, Lat, p_EL):
     "Marge bande passante"
-    B = bande_passante(alpha, Rb)
-    marge = B/2 - 3*Rb*(1+alpha)/2
+    Eb_N0_reel = Eb_N0_ratio(Rb, dep, G, kH, kV, aH, aV, E, Ar_stat, Ar_sat, polar, R, k_bolt,c, f, D, efficacite, Tsky, Tgd, Tm, P,Tf,L_cable, h_stat, Lat, p_EL)
+    marge = Eb_N0_reel - Eb_N0_req
     return marge
 
 ## Question 1.v/
-def debit_max(alpha, Rb, marge_impose):
+def debit_max(PRx, Eb_N0_req, Marge, N0):
     "Débit maximum"
-    B = bande_passante(alpha, Rb)
-    debit_max = 3*(B-2*marge_impose)/(1+alpha)
-    return debit_max
+    D_max = 10**(PRx/10)/(10**((Eb_N0_req + Marge)/10)*N0)
+    return D_max
 
 #Question 2.a
-def trace_courbes_parametriques(E, Ptx, alpha, Rb_values):
+def trace_courbes_parametriques(Eb_N0_req, dep, G, kH, kV, aH, aV, E, E_test, Ar_stat, Ar_sat, polar, R, Re, h_sat, k_bolt,c, f, D, efficacite, Tsky, Tgd, Tm, P, P_test,Tf,L_cable, h_stat, Lat, p_EL, Debit):
     # Courbes pour les différents angles d'élévation
     plt.figure(figsize=(8,5))
-    for i in E:
-        marge_vals = [marge(Rb, alpha) for Rb in Rb_values]
-        plt.plot(Rb_values, marge_vals)
-    
+    marge_elev = []
+    for e in E:
+        marge_list = []
+        for d in Debit:
+            marge_val = marge(Eb_N0_req, d, dep, G, kH, kV, aH, aV, e, Ar_stat, Ar_sat, polar, R, e, Re, h_sat, k_bolt,c, f, D, efficacite, Tsky, Tgd, Tm, P_test,Tf,L_cable, h_stat, Lat, p_EL)
+            marge_list.append(marge_val)
+        marge_elev.append(marge_list)
+    for i in marge_elev:
+        plt.plot(Debit, i, label=f"Angle d'élévation = {E[marge_elev.index(i)]}°")
     plt.xlabel("Débit d'information Rb (Mbit/s)")
     plt.ylabel("Marge système restante (dB)")
+    plt.title("Marge système restante en fonction du débit d'information pour différents angles d'élévation et une puissance fixée à 1.5 W")
     plt.legend()
     plt.grid(True)
     plt.show()
 
-    # Courbes pour différentes puissances Ptx
-    plt.figure(figsize=(8,5))
-    for j in Ptx:
-        marge_vals = [marge(Rb, alpha) + j/10 for Rb in Rb_values] 
-        plt.plot(Rb_values, marge_vals)
-    
+    marge_puissance = []
+    for p in P:
+        marge_list = []
+        for d in Debit:
+            marge_val = marge(Eb_N0_req, d, dep, G, kH, kV, aH, aV, E_test, Ar_stat, Ar_sat, polar, R, E_test, Re, h_sat, k_bolt,c, f, D, efficacite, Tsky, Tgd, Tm, p,Tf,L_cable, h_stat, Lat, p_EL)
+            marge_list.append(marge_val)
+        marge_puissance.append(marge_list)
+    for i in marge_puissance:
+        plt.plot(Debit, i, label=f"Puissance transmise = {P[marge_puissance.index(i)]}W")
     plt.xlabel("Débit d'information Rb (Mbit/s)")
     plt.ylabel("Marge système restante (dB)")
+    plt.title("Marge système restante en fonction du débit d'information pour différentes puissances transmises et un angle d'élévation fixé à 90°")
     plt.legend()
     plt.grid(True)
     plt.show()
-if __name__ == "__main__":
-    EIRP = PIRE(ct.P_test,ct.Gain_bord[9])
-    Dist = D(ct.Re, ct.h_sat, ct.E_test)
-    Loss_el = LFS(ct.Re, ct.h_sat, ct.E_test ,ct.c, ct.f)
-    Att_spe_pluie = att_pluie(ct.kH, ct.kV, ct.aH, ct.aV, ct.E_test, ct.Angle_ellipse, ct.I_precip)
-    Long_eff_pluie = Le(ct.kH, ct.kV, ct.aH, ct.aV, ct.h_stat, ct.E_test, ct.I_precip, ct.Angle_ellipse, ct.f, ct.Lat)
-    A_001 = A001(ct.kH, ct.kV, ct.aH, ct.aV, ct.h_stat, ct.E_test, ct.I_precip, ct.Angle_ellipse, ct.f, ct.Lat)
-    A_1 = A1(ct.kH, ct.kV, ct.aH, ct.aV, ct.h_stat, ct.E_test, ct.I_precip, ct.Angle_ellipse, ct.f, ct.Lat)
-    p_pol = perte_polar (ct.AR_stat, ct.AR_sat[9], ct.Angle_ellipse)
-    p_depoint = perte_depoint (ct.c, ct.f, ct.Diametre_antenne, ct.Depointage)
-    G_depoint = Gain_pertedep(ct.c, ct.f, ct.Diametre_antenne, ct.Efficacite_antenne, ct.Depointage)
-    P_reçue = Pre(ct.c, ct.f, ct.Diametre_antenne, ct.Efficacite_antenne, ct.Depointage, ct.P_test, ct.Gain_bord[9], ct.kH, ct.kV, ct.aH, ct.aV, ct.E_test, ct.AR_stat, ct.AR_sat[9], ct.Angle_ellipse, ct.I_precip, ct.E_test, ct.Re, ct.h_sat)
-    Trxin = temp_entree_recep(ct.Tlna, ct.Tmx, ct.Glna, ct.Tif, ct.Gmx)
-    Tain = temperature_bruit_entree_antenne(ct.Tsky, ct.Tgd, ct.Tm, ct.Perte_atm)
-    Taout = temperature_bruit_sortie_antenne(ct.c, ct.f, ct.Diametre_antenne, ct.Efficacite_antenne, ct.Tsky, ct.Tgd, ct.Tm, ct.P_test)
-    Trx = temperature_eq_recep(ct.c, ct.f, ct.Diametre_antenne, ct.Efficacite_antenne, ct.Tsky, ct.Tgd, ct.Tm, ct.P_test,ct.Tf,ct.Lfrx)
-    N0 = n0(ct.k,ct.c, ct.f, ct.Diametre_antenne, ct.Efficacite_antenne, ct.Tsky, ct.Tgd, ct.Tm, ct.P_test,ct.Tf,ct.Lfrx)
-    CN0_ratio = C_N0_ratio(ct.Depointage, ct.Gain_bord[9], ct.kH, ct.kV, ct.aH, ct.aV, ct.E_test, ct.AR_stat, ct.AR_sat[9], ct.Angle_ellipse, ct.I_precip, ct.E_test, ct.Re, ct.h_sat, ct.k,ct.c, ct.f, ct.Diametre_antenne, ct.Efficacite_antenne, ct.Tsky, ct.Tgd, ct.Tm, ct.P_test,ct.Tf,ct.Lfrx)
-    EbN0_ratio = Eb_N0_ratio(ct.B_test, ct.Depointage, ct.Gain_bord[9], ct.kH, ct.kV, ct.aH, ct.aV, ct.E_test, ct.AR_stat, ct.AR_sat[9], ct.Angle_ellipse, ct.I_precip, ct.E_test, ct.Re, ct.h_sat, ct.k,ct.c, ct.f, ct.Diametre_antenne, ct.Efficacite_antenne, ct.Tsky, ct.Tgd, ct.Tm, ct.P_test,ct.Tf,ct.Lfrx)
-    B = bande_passante(ct.Roll_off_factor, ct.B_test)
-    eta = eff_spectrale(ct.Code_correcteur, ct.B_test, ct.Roll_off_factor)
-    m = marge(ct.B_test, ct.Roll_off_factor)
-    deb_max = debit_max(ct.Roll_off_factor, ct.B_test, ct.Marge)
-    print("\n\nRésultats des questions :")
-    print("Question 1.a/ \nEIRP =", EIRP, "dBW")
-    print("Question 1.b/ \nDistance satellite station =", Dist, "km")
-    print("Question 1.c/ \nPertes en espace libre =", Loss_el, "dB")
-    print("Question 1.d/ \nAtténuation spécifique pluie =", Att_spe_pluie, "dB/km")
-    print("Question 1.e/ \nLongueur effective de cellule de pluie =", Long_eff_pluie, "m")
-    print("Question 1.f/ \nAffaiblissement prévu dépassé pour 0,01 % d'une année moyenne =", A_001, "dB")
-    print("Question 1.g/ \nAtténuation due à la pluie dépassée pendant 1% =", A_1, "dB")
-    print("Question 1.h/ \nPerte de polarisation =", p_pol, "dB")
-    print("Question 1.i/ \nPerte de dépointage =", p_depoint, "dB")
-    print("Question 1.j/ \nGain de l'antenne avec perte de dépointage =", G_depoint, "dB")
-    print("Question 1.k/ \nPuissance reçue au niveau du récepteur =", P_reçue, "dBW")
-    print("Question 1.l/ \nTempérature de bruit totale à l'entrée du récepteur =", Trxin, "K")
-    print("Question 1.m/ \nTempérature équivalente de bruit en sortie de l'antenne =", Tain, "K")
-    print("Question 1.n/ \nTempérature équivalente de bruit en sortie de l'antenne =", Taout, "K")
-    print("Question 1.o/ \nTempérature équivalente de bruit au récepteur =", Trx, "K")
-    print("Question 1.p/ \nDensité de puissance de bruit spectrale =", N0, "W/Hz")
-    print("Question 1.q/ \nRapport C/N0 =", CN0_ratio, "dBHz")
-    print("Question 1.r/ \nRapport Eb/N0 =", EbN0_ratio, "dB")
-    print("Question 1.s/ \nBande passante du signal =", B, "Hz")
-    print("Question 1.t/ \nEfficacité spectrale =", eta, "bit/s/Hz")
-    print("Question 1.u/ \nMarge bande passante =", m, "Hz")
-    print("Question 1.v/ \nDébit maximum =", deb_max, "bit/s")
-    trace_courbes_parametriques(ct.Elevation_sol, ct.Ptx, ct.Roll_off_factor, np.linspace(1e3, 1e7, 200))
+    
 
