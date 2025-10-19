@@ -113,7 +113,7 @@ def Pre(c, f, Diam, efficacite, dep, P, G, kH, kV, aH, aV, E, Ar_stat, Ar_sat, p
     """
     EIRP = PIRE(P, G)
     G_depoint = Gain_pertedep(c, f, Diam, efficacite, dep)
-    Attpluie = A001(kH, kV, aH, aV, h_stat, E, R, polar, f, Lat)
+    Attpluie = A1(kH, kV, aH, aV, h_stat, E, R, polar, f, Lat)
     p_pol = perte_polar(Ar_stat, Ar_sat, polar)
     P_reçue = EIRP + G_depoint - Attpluie + p_EL + p_pol 
     return P_reçue
@@ -148,7 +148,6 @@ def temperature_bruit_sortie_antenne(c, f, D, efficacite, Tsky, Tgd, Tm, P):
 
 ## Question 1.o/
 def temperature_eq_recep(c, f, D, efficacite, Tsky, Tgd, Tm, P,Tf,L_cable): 
-    "Température equivalente de bruit totale à l'entrée du récepteur "
     Ta_out = temperature_bruit_sortie_antenne(c, f, D, efficacite, Tsky, Tgd, Tm, P)
     Trx = Tf + Ta_out / (10**(L_cable/10))
     return Trx
@@ -162,7 +161,6 @@ def n0(k_bolt,c, f, D, efficacite, Tsky, Tgd, Tm, P,Tf,L_cable):
 
 ## Question 1.q/
 def C_N0_ratio(dep, G, kH, kV, aH, aV, E, Ar_stat, Ar_sat, polar, R, k_bolt,c, f, D, efficacite, Tsky, Tgd, Tm, P,Tf,L_cable, h_stat, Lat, p_EL):
-    "Rapport porteuse à bruit"
     Prx = Pre(c, f, D, efficacite, dep, P, G, kH, kV, aH, aV, E, Ar_stat, Ar_sat, polar, R, h_stat, Lat, p_EL)
     N0 = n0(k_bolt,c, f, D, efficacite, Tsky, Tgd, Tm, P,Tf,L_cable)
     ratio = (Prx - 10*np.log10(N0))
@@ -170,7 +168,6 @@ def C_N0_ratio(dep, G, kH, kV, aH, aV, E, Ar_stat, Ar_sat, polar, R, k_bolt,c, f
 
 ## Question 1.r/
 def Eb_N0_ratio(Rb, dep, G, kH, kV, aH, aV, E, Ar_stat, Ar_sat, polar, R, k_bolt,c, f, D, efficacite, Tsky, Tgd, Tm, P,Tf,L_cable, h_stat, Lat, p_EL):
-    "Rapport energie d'un bit sur bruit"
     CN0_ratio = C_N0_ratio(dep, G, kH, kV, aH, aV, E, Ar_stat, Ar_sat, polar, R, k_bolt,c, f, D, efficacite, Tsky, Tgd, Tm, P,Tf,L_cable, h_stat, Lat, p_EL)
     EbN0_ratio = CN0_ratio - 10*np.log10(Rb)
     return EbN0_ratio
@@ -203,7 +200,7 @@ def debit_max(PRx, Eb_N0_req, Marge, N0):
 
 #Question 2.a
 def trace_courbes_parametriques(Eb_N0_req, dep, G, kH, kV, aH, aV, E, E_test, Ar_stat, Ar_sat, polar, R, Re, h_sat, k_bolt,c, f, D, efficacite, Tsky, Tgd, Tm, P, P_test,Tf,L_cable, h_stat, Lat, p_EL, Debit):
-    "Courbes paramétriques permettant de déterminer la marge système restante (dB) en fonction du débit d'information (Mbits/s) pour les différents angles d'élévations" 
+    # Courbes pour les différents angles d'élévation
     plt.figure(figsize=(8,5))
     marge_elev = []
     for e in E:
@@ -220,7 +217,7 @@ def trace_courbes_parametriques(Eb_N0_req, dep, G, kH, kV, aH, aV, E, E_test, Ar
     plt.legend()
     plt.grid(True)
     plt.show()
- "Courbes paramétriques permettant de déterminer la marge système restante (dB) en fonction du débit d'information (Mbits/s) pour les différentes puissances" 
+
     marge_puissance = []
     for p in P:
         marge_list = []
