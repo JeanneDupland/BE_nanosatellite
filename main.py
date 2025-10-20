@@ -46,12 +46,12 @@ if __name__ == "__main__":
     print("Question 1.p/ \nDensité de puissance de bruit spectrale =", dens_spec, "W/Hz")
     print("Question 1.q/ \nRapport C/N0 =", CN0_ratio, "dBHz")
     print("Question 1.r/ \nRapport Eb/N0 =", EbN0_ratio, "dB")
-    print("Question 1.s/ \nBande passante du signal =", B, "Hz")
+    print("Question 1.s/ \nBande passante du signal =", B*10**(-6), "Hz")
     print("Question 1.t/ \nEfficacité spectrale =", eta)
     print("Question 1.u/ \nMarge =", m, "dB")
     print("Question 1.v/ \nDébit maximum =", deb_max/10**6, "Mbit/s")
 
-    trace_courbes_parametriques(ct.Rapport_EB_N0, ct.Depointage, ct.Gain_bord[9], ct.kH, ct.kV, ct.aH, ct.aV, ct.Angle_elevation, ct.E_test, ct.AR_stat, ct.AR_sat[9], ct.Angle_ellipse, ct.I_precip, ct.Re, ct.h_sat, ct.k,ct.c, ct.f, ct.Diametre_antenne, ct.Efficacite_antenne, ct.Tsky, ct.Tgd, ct.Tm, ct.Ptx, ct.P_test ,ct.Tf,ct.Lfrx, ct.h_stat, ct.Lat, Loss_el, ct.Debit)
+    trace_courbes_parametriques(ct.Rapport_EB_N0, ct.Depointage, ct.Gain_bord, ct.kH, ct.kV, ct.aH, ct.aV, ct.Elevation_sol, ct.E_test, ct.AR_stat, ct.AR_sat, ct.Angle_ellipse, ct.I_precip, ct.Re, ct.h_sat, ct.k,ct.c, ct.f, ct.Diametre_antenne, ct.Efficacite_antenne, ct.Tsky, ct.Tgd, ct.Tm, ct.Ptx, ct.P_test ,ct.Tf,ct.Lfrx, ct.h_stat, ct.Lat, Loss_el, ct.Debit)
 
     m_15_60_10 = marge(ct.Rapport_EB_N0, 10e6, ct.Depointage, ct.Gain_bord[6], ct.kH, ct.kV, ct.aH, ct.aV, 60, ct.AR_stat, ct.AR_sat[6], ct.Angle_ellipse, ct.I_precip, 60, ct.Re, ct.h_sat, ct.k,ct.c, ct.f, ct.Diametre_antenne, ct.Efficacite_antenne, ct.Tsky, ct.Tgd, ct.Tm, ct.P_test,ct.Tf,ct.Lfrx, ct.h_stat, ct.Lat, Loss_el)
     m_15_60_2 = marge(ct.Rapport_EB_N0, 2e6, ct.Depointage, ct.Gain_bord[6], ct.kH, ct.kV, ct.aH, ct.aV, 60, ct.AR_stat, ct.AR_sat[6], ct.Angle_ellipse, ct.I_precip, 60, ct.Re, ct.h_sat, ct.k,ct.c, ct.f, ct.Diametre_antenne, ct.Efficacite_antenne, ct.Tsky, ct.Tgd, ct.Tm, ct.P_test,ct.Tf,ct.Lfrx, ct.h_stat, ct.Lat, Loss_el)
