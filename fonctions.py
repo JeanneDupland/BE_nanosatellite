@@ -131,7 +131,7 @@ def temperature_bruit_entree_antenne(Tsky,Tgd, Tm, Atm):
     """
     # Calcul de T_a_in
     L_atm = 10 ** (Atm / 10)
-    Ta_in = (Tsky / L_atm) + Tm/ L_atm**2 + Tgd
+    Ta_in = Tgd + Tsky/L_atm + (1-1/L_atm) * Tm
     return (Ta_in)
 
 ## Question 1.n/
@@ -203,10 +203,10 @@ def trace_courbes_parametriques(Eb_N0_req, dep, G, kH, kV, aH, aV, E, E_test, Ar
     # Courbes pour les différents angles d'élévation
     plt.figure(figsize=(8,5))
     marge_elev = []
-    for e in E:
+    for j in range(len(E)):
         marge_list = []
         for d in Debit:
-            marge_val = marge(Eb_N0_req, d, dep, G, kH, kV, aH, aV, e, Ar_stat, Ar_sat, polar, R, e, Re, h_sat, k_bolt,c, f, D, efficacite, Tsky, Tgd, Tm, P_test,Tf,L_cable, h_stat, Lat, p_EL)
+            marge_val = marge(Eb_N0_req, d, dep, G[j], kH, kV, aH, aV, E[j], Ar_stat, Ar_sat[j], polar, R, E[j], Re, h_sat, k_bolt,c, f, D, efficacite, Tsky, Tgd, Tm, P_test,Tf,L_cable, h_stat, Lat, p_EL)
             marge_list.append(marge_val)
         marge_elev.append(marge_list)
     for i in marge_elev:
@@ -222,7 +222,7 @@ def trace_courbes_parametriques(Eb_N0_req, dep, G, kH, kV, aH, aV, E, E_test, Ar
     for p in P:
         marge_list = []
         for d in Debit:
-            marge_val = marge(Eb_N0_req, d, dep, G, kH, kV, aH, aV, E_test, Ar_stat, Ar_sat, polar, R, E_test, Re, h_sat, k_bolt,c, f, D, efficacite, Tsky, Tgd, Tm, p,Tf,L_cable, h_stat, Lat, p_EL)
+            marge_val = marge(Eb_N0_req, d, dep, G[9], kH, kV, aH, aV, E_test, Ar_stat, Ar_sat[9], polar, R, E_test, Re, h_sat, k_bolt,c, f, D, efficacite, Tsky, Tgd, Tm, p,Tf,L_cable, h_stat, Lat, p_EL)
             marge_list.append(marge_val)
         marge_puissance.append(marge_list)
     for i in marge_puissance:
